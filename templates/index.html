@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Emissions Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #todo-title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .content {
+            flex: 1 0 auto
+          }
+
+        header {
+            background-color: #00C70D;
+            color: #fff;
+            text-align: center;
+            padding: 1em 0;
+        }
+
+        section {
+            max-width: 600px;
+            margin: 2em auto;
+            padding: 2em;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h2 {
+            color: #00C70D;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        #todo-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #ddd; /* Add grey border */
+            text-align: center;
+        }
+
+        #task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #getresults {
+            background-color: #00C70D;
+        }
+
+        .task-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Style for the modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 2; /* Increase the z-index to ensure it appears above the overlay */
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        #task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #getresults {
+            padding: 20px;
+            background-color: #00C70D;
+            border: none;
+        }
+
+        .task-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Style for the modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 2; /* Increase the z-index to ensure it appears above the overlay */
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        html, body {
+            height: 100%;
+          }
+          body {
+            display: flex;
+            flex-direction: column;
+          }
+          .content {
+            flex: 1 0 auto;
+          }
+          .footer {
+            flex-shrink: 0;
+          }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em 0;
+            left: 0;
+            width: 100%;   
+            flex-shrink: 0;    
+        }
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Carbon Emissions Calculator</h1>
+        <p>Reduce Your Carbon Emissions</p>
+    </header>
+    <div class='content'>
+        <section id="todo-container">
+            <small><a href="/history">History</a> | <a href="/tips">Tips</a></small>
+            <div id="todo-title">
+                <h2>Weekly Carbon Calculator</h2>
+                <button onclick="openModal()">+</button>
+            </div>
+            <ul id="task-list"></ul>
+            <button id="getresults" onclick="generate()">Calculate my Carbon Footprint!</button>
+            <br>
+            <em id="response"><br>Your weekly carbon emissions are:</em>
+        </section>
+    </div>
+    <footer>
+        <p>Phil Ledoit, Yuri Bychov, Joe Marotta, George Jiang</p>
+    </footer>
+
+    <div id="add-task-modal" class="modal">
+        <input type="text" placeholder="Name" id="input1"><br>
+        <input type="text" placeholder="Origin" id="input2"><br>
+        <input type="text" placeholder="Destination" id="input3"><br>
+        <select id="input4">
+            <option value="Gasoline SUV">Gasoline SUV</option>
+            <option value="Hybrid SUV">Hybrid SUV</option>
+            <option value="Electric SUV">Electric SUV</option>
+            <option value="Gasoline Sedan">Gasoline Sedan</option>
+            <option value="Hybrid Sedan">Hybrid Sedan</option>
+            <option value="Electric Sedan">Electric Sedan</option>
+            <option value="Motorcycle">Motorcycle</option>
+            <option value="T">T</option>
+            <option value="Bus">Bus</option>
+            <option value="Public Transportation">Public Transportation</option>
+        </select><br>
+        <input type="text" placeholder="Weekly frequency" id="input5"><br>
+        <button onclick="addTask()">Add Route</button>
+    </div>
+    <div id="overlay" class="overlay" onclick="closeModal()"></div>
+    <script>
+        function openModal() {
+            document.getElementById('add-task-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('add-task-modal').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function sendData_save(name, origin, destination, transit, freq) {
+            $.ajax({
+                url: '/process',
+                type: 'POST',
+                data: { 'name': name, 'origin': origin, 'destination': destination, 'transit': transit, 'freq': freq},
+                success: function(response) {
+                    console.log(error);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function sendData_remove(name) {
+            $.ajax({
+                url: '/delete',
+                type: 'POST',
+                data: { 'name': name },
+                success: function(response) {
+                    console.log(error);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function generate() {
+            $.ajax({
+                url: '/generate',
+                type: 'POST',
+                success: function(response) {
+                    document.getElementById('response').innerHTML = response;
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+
+
+        function addTask() {
+            const name = document.getElementById('input1').value;
+            const origin = document.getElementById('input2').value;
+            const destination = document.getElementById('input3').value;
+            const mode = document.getElementById('input4').value;
+            const freq = document.getElementById('input5').value;
+
+            sendData_save(name, origin, destination, mode, freq);
+
+            const taskList = document.getElementById('task-list');
+            const listItem = document.createElement('li');
+            listItem.className = 'task-item';
+            listItem.innerHTML = `
+                <div>
+                    <strong>${name}</strong><br>
+                    Origin: ${origin}<br>
+                    Destination: ${destination}<br>
+                    Transportation mode: ${mode}<br>
+                    Frequency: ${freq}<br>
+                </div>
+                <button onclick="removeTask('${name}', this)">x</button>
+            `;
+            taskList.appendChild(listItem);
+
+            closeModal();
+
+        }
+
+        function removeTask(name, button) {
+            sendData_remove(name);
+            const listItem = button.parentNode;
+            const taskList = document.getElementById('task-list');
+            taskList.removeChild(listItem);
+
+
+        }
+
+    </script>
+
+</body>
+
+</html>

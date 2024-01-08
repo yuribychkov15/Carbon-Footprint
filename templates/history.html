@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #2ecc71;
+            color: #fff;
+            text-align: center;
+            padding: 1em 0;
+        }
+
+        section {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 2em;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 20px solid #ddd; /* Add grey border */
+        }
+
+        h2 {
+            color: #2ecc71;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        #todo-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #ddd; /* Add grey border */
+        }
+
+        #task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .task-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Style for the modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 2; /* Increase the z-index to ensure it appears above the overlay */
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1em 0;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+
+<body onload="loadData()">
+    <header>
+        <h1>Carbon Emissions Calculator</h1>
+        <p>Reduce Your Carbon Emissions</p>
+    </header>
+    <div id="todo-container">
+        <small><a href="/">Calculator</a> | <a href="/tips">Tips</a></small>
+        <h2>Carbon Footprint History</h2>
+        <p id="response">History</p>
+    </div>
+
+    <div id="overlay" class="overlay" onclick="closeModal()"></div>
+
+    <script>
+        function loadData() {
+            $.ajax({
+                url: '/get_history',
+                type: 'POST',
+                success: function(response) {
+                    document.getElementById('response').innerHTML = response;
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+    </script>
+    <footer>
+        <p>Phil Ledoit, Yuri Bychov, Joe Marotta, George Jiang</p>
+    </footer>
+
+</body>
+
+</html>
